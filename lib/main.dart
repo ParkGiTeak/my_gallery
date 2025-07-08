@@ -54,22 +54,27 @@ class _MyGalleryAppState extends State<MyGalleryApp> {
       ),
       body: images == null
           ? Center(child: Text('No data'))
-          : FutureBuilder<Uint8List>(
-              future: images![0].readAsBytes(),
-              builder: (context, asyncSnapshot) {
-                final data = asyncSnapshot.data;
+          : PageView(
+              children: images!.map((image) {
+                return FutureBuilder<Uint8List>(
+                  future: image.readAsBytes(),
+                  builder: (context, asyncSnapshot) {
+                    final data = asyncSnapshot.data;
 
-                if (data == null ||
-                    asyncSnapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                return Image.memory(
-                  data,
-                  width: double.infinity,
+                    if (data == null ||
+                        asyncSnapshot.connectionState ==
+                            ConnectionState.waiting) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    return Image.memory(
+                      data,
+                      width: double.infinity,
+                    );
+                  },
                 );
-              },
+              }).toList(),
             ),
     );
   }
