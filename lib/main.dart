@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -50,6 +52,25 @@ class _MyGalleryAppState extends State<MyGalleryApp> {
       appBar: AppBar(
         title: const Text('전자액자'),
       ),
+      body: images == null
+          ? Center(child: Text('No data'))
+          : FutureBuilder<Uint8List>(
+              future: images![0].readAsBytes(),
+              builder: (context, asyncSnapshot) {
+                final data = asyncSnapshot.data;
+
+                if (data == null ||
+                    asyncSnapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                return Image.memory(
+                  data,
+                  width: double.infinity,
+                );
+              },
+            ),
     );
   }
 }
